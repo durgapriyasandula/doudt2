@@ -1,3 +1,5 @@
+import {Component} from 'react'
+
 import historyItem from './components/historyItem'
 
 import './App.css'
@@ -79,33 +81,59 @@ const initialHistoryList = [
 ]
 
 // Replace your code here
-const App = () => (
-  <div className="app-container">
-    <div className="heading-container">
-      <img
-        src="https://assets.ccbp.in/frontend/react-js/history-website-logo-img.png"
-        alt="app logo"
-        className="image-size"
-      />
-      <div>
-        <img
-          src="https://assets.ccbp.in/frontend/react-js/search-img.png"
-          alt="search"
-          className="search-container search-image-size"
-        />
-        <input
-          type="search"
-          placeholder="Search History"
-          className="search-container"
-        />
+class App extends Component {
+  state = {searchInput: '', HistoryList: initialHistoryList}
+
+  onChangeSearchInput = event => {
+    this.setState({searchInput: event.target.value})
+  }
+
+  deleteHistory = id => {
+    const {HistoryList} = this.state
+    const filteredHistoryList = HistoryList.filter(each => each.id !== id)
+    this.setState({HistoryList: filteredHistoryList})
+  }
+
+  render() {
+    const {searchInput, HistoryList} = this.state
+    const searchResults = initialHistoryList.filter(eachHistory =>
+      eachHistory.title.includes(searchInput),
+    )
+    return (
+      <div className="app-container">
+        <div className="heading-container">
+          <img
+            src="https://assets.ccbp.in/frontend/react-js/history-website-logo-img.png"
+            alt="app logo"
+            className="image-size"
+          />
+          <div>
+            <img
+              src="https://assets.ccbp.in/frontend/react-js/search-img.png"
+              alt="search"
+              className="search-container search-image-size"
+            />
+            <input
+              type="search"
+              placeholder="Search History"
+              className="search-container"
+              onChange={this.onChangeSearchInput}
+              value={searchInput}
+            />
+          </div>
+        </div>
+        <ul className="list-container">
+          {searchResults.map(eachHistory => (
+            <historyItem
+              eachHistoryDetails={eachHistory}
+              key={eachHistory.id}
+              deleteHistory={this.deleteHistory}
+            />
+          ))}
+        </ul>
       </div>
-    </div>
-    <ul className="list-container">
-      {initialHistoryList.map(eachHistory => (
-        <historyItem eachHistoryDetails={eachHistory} key={eachHistory.id} />
-      ))}
-    </ul>
-  </div>
-)
+    )
+  }
+}
 
 export default App
